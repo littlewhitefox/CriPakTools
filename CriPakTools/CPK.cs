@@ -617,7 +617,7 @@ namespace CriPakTools
             int output_end = 0x100 + uncompressed_size - 1;
             byte bit_pool = 0;
             int bits_left = 0, bytes_output = 0;
-            int[] vle_lens = new int[4] { 2, 3, 5, 8 };
+            int[] vle_lens = { 2, 3, 5, 8 };
 
             while (bytes_output < uncompressed_size)
             {
@@ -830,7 +830,6 @@ namespace CriPakTools
                         break;
                     default:
                         throw new Exception("I need to implement this TOC!");
-                        break;
                 }
 
 
@@ -862,7 +861,6 @@ namespace CriPakTools
                         break;
                     default:
                         throw new Exception("I need to implement this TOC!");
-                        break;
                 }
             }
         }
@@ -987,15 +985,17 @@ namespace CriPakTools
 
             for (int i = 0; i < num_columns; i++)
             {
-                column = new COLUMN();
-                column.flags = br.ReadByte();
+                column = new COLUMN
+                {
+                    flags = br.ReadByte()
+                };
                 if (column.flags == 0)
                 {
                     br.BaseStream.Seek(3, SeekOrigin.Current);
                     column.flags = br.ReadByte();
                 }
 
-                column.name = tools.ReadCString(br, -1, (long)(br.ReadInt32() + strings_offset));
+                column.name = tools.ReadCString(br, -1, br.ReadInt32() + strings_offset);
                 columns.Add(column);
             }
 
